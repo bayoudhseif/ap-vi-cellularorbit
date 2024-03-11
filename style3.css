@@ -1,0 +1,38 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e0e0e0;
+}
+
+.garden {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.flower {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 12px;
+    color: #fff;
+}
+
+/* Example for color coding, expand based on type, direction, and status */
+.friend.outgoing.missed { background-color: #f1c40f; }
+.friend.incoming.answered { background-color: #2ecc71; }
+/* Add more classes based on your data mapping */
+
+
