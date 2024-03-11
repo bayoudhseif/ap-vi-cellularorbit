@@ -19,13 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'Friend', direction: 'outgoing', status: 'missed', duration: 1 }
     ];
 
+    document.body.style.backgroundImage = "url('img/blur3.png')";
     
+    // To make the background image cover the entire body without repeating
+    document.body.style.backgroundSize = "cover";
+    
+    // To fix the background image and prevent it from scrolling with the content
+    document.body.style.backgroundAttachment = "fixed";
 
     // Initialize SVG for visualization with full screen dimensions and black background
     const svg = d3.select('#visualization').append('svg')
         .attr('width', '100%')
         .attr('height', '100vh')
-        .style('background-color', 'black');
+        //.style('background-color', 'black');
 
     // Determine the full width and height of the browser window
     const width = document.body.clientWidth;
@@ -84,9 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to return the image path based on the type of call
     const imagePathForCallType = (call) => {
         switch (call.type) {
-            case 'Friend': return 'img/paper2.png';
+            case 'Friend': return 'img/aaa.png';
             case 'Family': return 'img/paper1.png';
-            case 'Other': return 'img/paper3.png';
+            case 'Other': return 'img/aaat.png';
             default: return ''; // Provide a default case for safety
         }
     };
