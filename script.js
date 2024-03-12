@@ -368,7 +368,14 @@ document.getElementById('toggleCrazyMode').addEventListener('change', function()
 });
 
 function applyCrazyMode() {
-    d3.selectAll('.planet').each(function() {
+    // New image URLs for the balls in crazy mode
+    const crazyModeImages = [
+        'img/blueball1.png',
+        'img/greenball1.png',
+        'img/pinkball1.png'
+    ];
+
+    d3.selectAll('.planet').each(function(d, i) {
         const planet = d3.select(this);
 
         function crazyUpdate() {
@@ -392,6 +399,10 @@ function applyCrazyMode() {
                 .on('end', crazyUpdate); // Repeat after each move
         }
 
+        // Update image URL to a new image in crazy mode
+        const newImageURL = crazyModeImages[i % crazyModeImages.length]; // Cycle through the new images
+        planet.attr('xlink:href', newImageURL);
+
         crazyUpdate(); // Start the crazy movement and resizing
     });
 
@@ -402,6 +413,7 @@ function applyCrazyMode() {
         enableTooltips();
     }
 }
+
 
 // Assuming tooltips are handled by a mouseover event on '.planet' elements
 function disableTooltips() {
