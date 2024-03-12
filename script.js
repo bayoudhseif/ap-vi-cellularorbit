@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'Friend', direction: 'outgoing', status: 'missed', duration: 1 }
     ];
 
+    
+
+    
+    
+
     document.body.style.backgroundImage = "url('img/blur3.png')";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundAttachment = "fixed";
@@ -40,29 +45,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const sun = svg.append('image')
-        .attr('xlink:href', 'img/sun4.png')
-        .attr('width', 150)
-        .attr('height', 150)
-        .attr('x', width / 2 - 75)
+    .attr('xlink:href', 'img/sun4.png')
+    .attr('width', 150)
+    .attr('height', 150)
+    .attr('x', width / 2 - 75)
+    .attr('y', height / 2 - 75);
+
+// Define an array of possible tooltip messages for the sun
+const sunTooltipMessages = [
+    'Stop fuckin touching me.',
+    'Do you want a sunburn?',
+    'I\'m not a button.',
+    'Seïf === the solar system.',
+    'If Einstein was alive, he would have used the word swag!',
+    'Als ik geen 10/10 krijg voor deze opdracht, gaan we een groot probleem hebben.'
+];
+
+// Define tooltip for the sun
+const sunTooltip = d3.select('body').append('div')
+    .style('position', 'absolute')
+    .style('padding', '10px')
+    .style('background', 'rgba(0,0,0,0.75)')
+    .style('border-radius', '5px')
+    .style('color', 'white')
+    .style('display', 'none')
+    .style('pointer-events', 'none');
+
+// Initialize index for tracking the current message
+let tooltipIndex = 0;
+
+// Attach event listeners to the sun
+sun.on('mouseover', function(event) {
+    const currentMessage = sunTooltipMessages[tooltipIndex];
+    sunTooltip
+        .html(currentMessage)
+        .style('display', 'block')
+        .style('left', `${event.pageX + 20}px`)
+        .style('top', `${event.pageY}px`);
+    
+    // Increment the index for the next message, and loop back to the start if necessary
+    tooltipIndex = (tooltipIndex + 1) % sunTooltipMessages.length;
+})
+.on('mousemove', function(event) {
+    sunTooltip
+        .style('left', `${event.pageX + 20}px`)
+        .style('top', `${event.pageY}px`);
+})
+.on('mouseout', function() {
+    sunTooltip.style('display', 'none');
+});
+
+const shakeSun = () => {
+    sun.transition()
+        .duration(2000)
+        .ease(d3.easeSin)
+        .attr('y', height / 2 - 75 + 10)
+        .transition()
+        .duration(2000)
+        .ease(d3.easeSin)
+        .attr('y', height / 2 - 75 - 10)
+        .transition()
+        .duration(2000)
+        .ease(d3.easeSin)
         .attr('y', height / 2 - 75);
+};
 
-    const shakeSun = () => {
-        sun.transition()
-            .duration(2000)
-            .ease(d3.easeSin)
-            .attr('y', height / 2 - 75 + 10)
-            .transition()
-            .duration(2000)
-            .ease(d3.easeSin)
-            .attr('y', height / 2 - 75 - 10)
-            .transition()
-            .duration(2000)
-            .ease(d3.easeSin)
-            .attr('y', height / 2 - 75);
-    };
+shakeSun();
+setInterval(shakeSun, 6000);
 
-    shakeSun();
-    setInterval(shakeSun, 6000);
+
 
     const tooltip = d3.select('body').append('div')
         .style('position', 'absolute')
@@ -81,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             default: return '';
         }
     };
+    
 
     let speed = 1;
 
@@ -146,6 +198,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setInterval(update, 15);
     });
+
+    // Listen for changes on the speed slider
+document.getElementById('speedSlider').addEventListener('input', function() {
+    document.getElementById('speedValue').textContent = this.value === '0' ? 'Paused' : this.value + 'x'; // Update speed value display
+    speed = parseFloat(this.value);
+    
+    // Optionally, trigger an update to the animation if necessary
+    // This might not be needed if your animation loop is continuously running
+});
+
+    
+
+
+
+
+const update = () => {
+    let rotationSpeed = (1 / (call.duration * 10)) * speed; // `speed` is now dynamic
+    angle += call.direction === 'incoming' ? rotationSpeed : -rotationSpeed;
+    const newX = width / 2 + orbitRadius * Math.cos(angle);
+    const newY = height / 2 + orbitRadius * Math.sin(angle);
+    planetImage.attr('x', newX - imageSize / 2).attr('y', newY - imageSize / 2);
+};
+
+// Assuming each planet has a class 'planet'
+const showTooltipFunction = function(event, d) {
+    // Display the tooltip with details about the hovered planet
+    tooltip
+        .html(`Type: ${d.type}<br>Direction: ${d.direction}<br>Status: ${d.status}<br>Duration: ${d.duration}s`)
+        .style('display', 'block')
+        .style('left', `${event.pageX + 20}px`)
+        .style('top', `${event.pageY}px`);
+
+    // Reduce speed for easier viewing if speed is higher than 0.1
+    if (speed > 0.1) {
+        speed = 0.1;
+    }
+};
+
+// Assuming each planet has a class 'planet'
+d3.selectAll('.planet')
+    .on('mouseover', showTooltipFunction)
+    .on('mousemove', function(event) {
+        // Update the tooltip position on mouse move
+        tooltip
+            .style('left', `${event.pageX + 20}px`)
+            .style('top', `${event.pageY}px`);
+    })
+    .on('mouseout', function() {
+        // Hide the tooltip
+        tooltip.style('display', 'none');
+
+        // Reset the speed to match the slider's setting
+        speed = parseFloat(document.getElementById('speedSlider').value);
+    });
+
+
+    
+
+
 
     // Filter state initialization
 let filterState = {
@@ -283,7 +394,24 @@ function applyCrazyMode() {
 
         crazyUpdate(); // Start the crazy movement and resizing
     });
+
+    // Add logic to disable tooltips in crazy mode
+    if (isCrazyMode) {
+        disableTooltips();
+    } else {
+        enableTooltips();
+    }
 }
+
+// Assuming tooltips are handled by a mouseover event on '.planet' elements
+function disableTooltips() {
+    d3.selectAll('.planet').on('mouseover', null); // Remove mouseover event
+}
+
+function enableTooltips() {
+    d3.selectAll('.planet').on('mouseover', showTooltipFunction); // Replace `showTooltipFunction` with the actual function name used to show tooltips
+}
+
 
 
 
