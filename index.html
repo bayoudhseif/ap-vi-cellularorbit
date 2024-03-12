@@ -26,6 +26,41 @@
             <li>Purple -> Other</li>
         </ul>
     </div>
+
+    <!-- Slider for filtering duration -->
+    <div id="durationFilter" style="position: fixed; top: 50px; right: 20px; color: white;">
+        <input type="range" id="durationSlider" min="1" max="120" value="1">
+        <label for="durationSlider">Duration Filter (1-120 seconds)</label>
+    </div>
+
+    <!-- Checkboxes for filtering by call category -->
+    <div id="categoryFilter" style="position: fixed; top: 150px; right: 20px; color: white;">
+        <div>
+            <input type="checkbox" id="toggleFriend" checked>
+            <label for="toggleFriend">Friend</label>
+        </div>
+        <div>
+            <input type="checkbox" id="toggleFamily" checked>
+            <label for="toggleFamily">Family</label>
+        </div>
+        <div>
+            <input type="checkbox" id="toggleOther" checked>
+            <label for="toggleOther">Other</label>
+        </div>
+    </div>
+
+    <!-- Checkboxes for filtering by call direction -->
+    <div id="directionFilter" style="position: fixed; top: 250px; right: 20px; color: white;">
+        <div>
+            <input type="checkbox" id="toggleIncoming" checked>
+            <label for="toggleIncoming">Incoming</label>
+        </div>
+        <div>
+            <input type="checkbox" id="toggleOutgoing" checked>
+            <label for="toggleOutgoing">Outgoing</label>
+        </div>
+    </div>
+
     <!-- Main visualization container -->
     <div id="visualization"></div>
     

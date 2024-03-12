@@ -1,6 +1,4 @@
-// Wait for the document to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
-    // Define an array of call data
     const calls = [
         { type: 'Friend', direction: 'outgoing', status: 'missed', duration: 6 },
         { type: 'Friend', direction: 'outgoing', status: 'missed', duration: 1 },
@@ -20,24 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     document.body.style.backgroundImage = "url('img/blur3.png')";
-    
-    // To make the background image cover the entire body without repeating
     document.body.style.backgroundSize = "cover";
-    
-    // To fix the background image and prevent it from scrolling with the content
     document.body.style.backgroundAttachment = "fixed";
 
-    // Initialize SVG for visualization with full screen dimensions and black background
     const svg = d3.select('#visualization').append('svg')
         .attr('width', '100%')
-        .attr('height', '100vh')
-        //.style('background-color', 'black');
+        .attr('height', '100vh');
 
-    // Determine the full width and height of the browser window
     const width = document.body.clientWidth;
     const height = window.innerHeight;
 
-    // Add stars to the SVG background to simulate a night sky
     const numStars = 200;
     for (let i = 0; i < numStars; i++) {
         const x = Math.random() * width;
@@ -49,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('fill', 'white');
     }
 
-    // Append an image of the sun to the SVG and position it in the center
     const sun = svg.append('image')
         .attr('xlink:href', 'img/sun4.png')
         .attr('width', 150)
@@ -57,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr('x', width / 2 - 75)
         .attr('y', height / 2 - 75);
 
-    // Define a function to make the sun image "shake" or vibrate
     const shakeSun = () => {
         sun.transition()
             .duration(2000)
@@ -73,11 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('y', height / 2 - 75);
     };
 
-    // Trigger the sun shaking immediately and repeat every 6 seconds
     shakeSun();
     setInterval(shakeSun, 6000);
 
-    // Add a tooltip for displaying call information on hover
     const tooltip = d3.select('body').append('div')
         .style('position', 'absolute')
         .style('padding', '10px')
@@ -87,30 +73,24 @@ document.addEventListener('DOMContentLoaded', () => {
         .style('display', 'none')
         .style('pointer-events', 'none');
 
-    // Function to return the image path based on the type of call
     const imagePathForCallType = (call) => {
         switch (call.type) {
             case 'Friend': return 'img/aaa.png';
             case 'Family': return 'img/paper1.png';
             case 'Other': return 'img/aaat.png';
-            default: return ''; // Provide a default case for safety
+            default: return '';
         }
     };
 
-    // Initialize speed variable for controlling animation speed
     let speed = 1;
 
-    // Process each call in the data array
     calls.forEach((call, index) => {
-        // Calculate the orbit radius based on call direction and index
         const orbitRadius = call.direction === 'incoming' ? 100 + index * 5 : 150 + index * 5;
-        let angle = Math.random() * 2 * Math.PI; // Random starting angle
+        let angle = Math.random() * 2 * Math.PI;
 
-        // Calculate initial position of the call icon
         const x = width / 2 + orbitRadius * Math.cos(angle);
         const y = height / 2 + orbitRadius * Math.sin(angle);
 
-        // Draw a dashed circle to represent the orbit of the call icon
         svg.append('circle')
             .attr('cx', width / 2)
             .attr('cy', height / 2)
@@ -120,49 +100,95 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('stroke-dasharray', '3,3')
             .attr('stroke-opacity', 0.4);
 
-        // Determine the size of the call icon based on call duration
-        let size = call.duration * 10; // Use duration to scale size
-        let imageSize = Math.sqrt(size); // Adjust image size proportionally
+        let size = call.duration * 10;
+        let imageSize = Math.sqrt(size);
 
-        // Append the call icon to the SVG
+        const callClass = call.type.toLowerCase();
         const planetImage = svg.append('image')
             .attr('xlink:href', imagePathForCallType(call))
+            .attr('class', `planet ${callClass} ${call.direction}`)
             .attr('width', imageSize)
             .attr('height', imageSize)
             .attr('x', x - imageSize / 2)
             .attr('y', y - imageSize / 2)
-            .datum({ angle }) // Store the initial angle for rotation calculations
-            // Display tooltip on mouseover
+            .datum({ angle, duration: call.duration })
             .on('mouseover', function(event, d) {
                 tooltip
                     .html(`Type: ${call.type}<br>Direction: ${call.direction}<br>Status: ${call.status}<br>Duration: ${call.duration}s`)
                     .style('display', 'block')
                     .style('left', `${event.pageX + 20}px`)
                     .style('top', `${event.pageY}px`);
-                speed = 0.1; // Slow down rotation speed on hover
+                speed = 0.1;
             })
-            // Update tooltip position on mousemove
             .on('mousemove', function(event) {
                 tooltip
                     .style('left', `${event.pageX + 20}px`)
                     .style('top', `${event.pageY}px`);
             })
-            // Hide tooltip and reset rotation speed on mouseout
             .on('mouseout', function() {
                 tooltip.style('display', 'none');
                 speed = 1;
             });
 
-        // Function to update call icon position for rotation effect
         const update = () => {
-            let rotationSpeed = (1 / (call.duration * 10)) * speed; // Adjust rotation speed based on call duration
-            angle += call.direction === 'incoming' ? rotationSpeed : -rotationSpeed; // Direction affects rotation direction
+            let rotationSpeed = (1 / (call.duration * 10)) * speed;
+            angle += call.direction === 'incoming' ? rotationSpeed : -rotationSpeed;
             const newX = width / 2 + orbitRadius * Math.cos(angle);
             const newY = height / 2 + orbitRadius * Math.sin(angle);
-            planetImage.attr('x', newX - imageSize / 2).attr('y', newY - imageSize / 2); // Update position
+            planetImage.attr('x', newX - imageSize / 2).attr('y', newY - imageSize / 2);
         };
 
-        // Continuously update call icon position for rotation effect
         setInterval(update, 15);
+    });
+
+    // Function to filter planets based on duration
+    const filterPlanetsByDuration = (duration) => {
+        d3.selectAll('.planet').style('display', 'none'); // Hide all planets
+        d3.selectAll('.planet')
+            .filter(function() {
+                return +this.dataset.duration <= duration; // Show planets with duration less than or equal to selected value
+            })
+            .style('display', 'block');
+    };
+
+    const durationSlider = document.getElementById('durationSlider');
+    durationSlider.addEventListener('input', function() {
+        const selectedDuration = +this.value;
+        filterPlanetsByDuration(selectedDuration);
+    });
+
+    const toggleDirection = (direction, isChecked) => {
+        const opacity = isChecked ? 1 : 0.1;
+        d3.selectAll(`.${direction}`).style('opacity', opacity);
+    };
+
+    const toggleIncomingCheckbox = document.getElementById('toggleIncoming');
+    toggleIncomingCheckbox.addEventListener('change', function() {
+        toggleDirection('incoming', this.checked);
+    });
+
+    const toggleOutgoingCheckbox = document.getElementById('toggleOutgoing');
+    toggleOutgoingCheckbox.addEventListener('change', function() {
+        toggleDirection('outgoing', this.checked);
+    });
+
+    const toggleCategory = (category, isChecked) => {
+        const opacity = isChecked ? 1 : 0.1;
+        d3.selectAll(`.${category}`).style('opacity', opacity);
+    };
+
+    const toggleFriendCheckbox = document.getElementById('toggleFriend');
+    toggleFriendCheckbox.addEventListener('change', function() {
+        toggleCategory('friend', this.checked);
+    });
+
+    const toggleFamilyCheckbox = document.getElementById('toggleFamily');
+    toggleFamilyCheckbox.addEventListener('change', function() {
+        toggleCategory('family', this.checked);
+    });
+
+    const toggleOtherCheckbox = document.getElementById('toggleOther');
+    toggleOtherCheckbox.addEventListener('change', function() {
+        toggleCategory('other', this.checked);
     });
 });
