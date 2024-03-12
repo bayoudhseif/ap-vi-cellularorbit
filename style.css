@@ -20,7 +20,7 @@ p {
 }
 
 body {
-    font-family: 'Indie Flower', cursive;
+    font-family: 'Montserrat', cursive;
 }
 
 /* style.css */
@@ -36,7 +36,7 @@ body {
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer; /* Pointer cursor on hover */
-    font-family: 'Indie Flower', cursive; /* Same font as the rest of your page */
+    font-family: 'Montserrat', cursive; /* Same font as the rest of your page */
     padding: 5px 20px; /* Smaller padding makes the button smaller */
     margin-left: 20px; /* Pushes the button to the left */
 }
