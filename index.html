@@ -30,7 +30,8 @@
     <!-- Slider for filtering duration -->
     <div id="durationFilter" style="position: fixed; top: 50px; right: 20px; color: white;">
         <input type="range" id="durationSlider" min="1" max="120" value="1">
-        <label for="durationSlider">Duration Filter (1-120 seconds)</label>
+        <label for="durationSlider">Duration (1-120 seconds)</label>
+        <div id="durationValue">1</div> <!-- Added div to display current value -->
     </div>
 
     <!-- Checkboxes for filtering by call category -->
@@ -69,6 +70,5 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <!-- Custom script for the calling planets visualization -->
     <script src="script.js"></script>
-
 </body>
 </html>

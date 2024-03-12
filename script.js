@@ -111,7 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('height', imageSize)
             .attr('x', x - imageSize / 2)
             .attr('y', y - imageSize / 2)
-            .datum({ angle, duration: call.duration })
+            .datum({ 
+                type: call.type, 
+                direction: call.direction, 
+                status: call.status, 
+                duration: call.duration 
+            })
+            
             .on('mouseover', function(event, d) {
                 tooltip
                     .html(`Type: ${call.type}<br>Direction: ${call.direction}<br>Status: ${call.status}<br>Duration: ${call.duration}s`)
@@ -141,55 +147,56 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(update, 15);
     });
 
-    // Function to filter planets based on duration
-    const filterPlanetsByDuration = (duration) => {
-        d3.selectAll('.planet').style('display', 'none'); // Hide all planets
-        d3.selectAll('.planet')
-        .filter(function(d) {
-            return d.duration <= duration; // Access duration from bound data 'd'
-        })
-        
-            .style('display', 'block');
+    // Filter state initialization
+    let filterState = {
+        friend: true,
+        family: true,
+        other: true,
+        incoming: true,
+        outgoing: true,
+        duration: 120, // Assuming this is your initial duration filter value
     };
 
-    const durationSlider = document.getElementById('durationSlider');
-    durationSlider.addEventListener('input', function() {
-        const selectedDuration = +this.value;
-        filterPlanetsByDuration(selectedDuration);
+    // Function to apply filters based on the current filter state
+    function applyFilters() {
+        d3.selectAll('.planet').style('display', function(d) {
+            const categoryMatch = filterState[d.type.toLowerCase()];
+            const directionMatch = filterState[d.direction];
+            const durationMatch = d.duration <= filterState.duration;
+            return categoryMatch && directionMatch && durationMatch ? 'block' : 'none';
+        });
+    }
+    
+
+    // Function to update the filter state and apply filters
+    function updateFilters() {
+        // Update filter state based on checkboxes
+        filterState.friend = document.getElementById('toggleFriend').checked;
+        filterState.family = document.getElementById('toggleFamily').checked;
+        filterState.other = document.getElementById('toggleOther').checked;
+        filterState.incoming = document.getElementById('toggleIncoming').checked;
+        filterState.outgoing = document.getElementById('toggleOutgoing').checked;
+
+        // Update filter state based on the duration slider
+        filterState.duration = parseInt(document.getElementById('durationSlider').value, 10);
+
+        // Apply the updated filters
+        applyFilters();
+    }
+
+    // Attach event listeners for checkboxes
+    document.getElementById('toggleFriend').addEventListener('change', updateFilters);
+    document.getElementById('toggleFamily').addEventListener('change', updateFilters);
+    document.getElementById('toggleOther').addEventListener('change', updateFilters);
+    document.getElementById('toggleIncoming').addEventListener('change', updateFilters);
+    document.getElementById('toggleOutgoing').addEventListener('change', updateFilters);
+
+    // Attach event listener for the duration slider
+    document.getElementById('durationSlider').addEventListener('input', function() {
+        document.getElementById('durationValue').textContent = this.value;
+        updateFilters();
     });
 
-    const toggleDirection = (direction, isChecked) => {
-        const opacity = isChecked ? 1 : 0.1;
-        d3.selectAll(`.${direction}`).style('opacity', opacity);
-    };
-
-    const toggleIncomingCheckbox = document.getElementById('toggleIncoming');
-    toggleIncomingCheckbox.addEventListener('change', function() {
-        toggleDirection('incoming', this.checked);
-    });
-
-    const toggleOutgoingCheckbox = document.getElementById('toggleOutgoing');
-    toggleOutgoingCheckbox.addEventListener('change', function() {
-        toggleDirection('outgoing', this.checked);
-    });
-
-    const toggleCategory = (category, isChecked) => {
-        const opacity = isChecked ? 1 : 0.1;
-        d3.selectAll(`.${category}`).style('opacity', opacity);
-    };
-
-    const toggleFriendCheckbox = document.getElementById('toggleFriend');
-    toggleFriendCheckbox.addEventListener('change', function() {
-        toggleCategory('friend', this.checked);
-    });
-
-    const toggleFamilyCheckbox = document.getElementById('toggleFamily');
-    toggleFamilyCheckbox.addEventListener('change', function() {
-        toggleCategory('family', this.checked);
-    });
-
-    const toggleOtherCheckbox = document.getElementById('toggleOther');
-    toggleOtherCheckbox.addEventListener('change', function() {
-        toggleCategory('other', this.checked);
-    });
+    // Apply filters on initial load
+    applyFilters();
 });
