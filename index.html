@@ -7,32 +7,57 @@
     
     <!-- External stylesheet link -->
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
     
     <!-- Title of the HTML document -->
     <title>Cellular Orbit</title>
 </head>
 <body>
     <!-- Legend container -->
-    <div id="legend" style="position: absolute; left: 0; top: 0; color: white;">
-        <h3>Legend</h3>
-        <ul>
-            <li>Clockwise -> Incoming call</li>
-            <li>Counter clockwise -> Outgoing call</li>
-            <br>
-            <li>Size -> Length of the call</li>
-            <br>
-            <li>Green -> Family</li>
-            <li>Blue -> Friends</li>
-            <li>Purple -> Other</li>
-        </ul>
+<div id="legend" style="position: absolute; left: 0; top: 0; color: white;">
+    <h3 style="padding-left: 20px;">Legend</h3>
+    <ul>
+        <li>Clockwise -> Incoming call</li>
+        <li>Counter clockwise -> Outgoing call</li>
+        <br>
+        <li>Size -> Length of the call</li>
+        <br>
+        <li>Green -> Family</li>
+        <li>Blue -> Friends</li>
+        <li>Purple -> Other</li>
+    </ul>
+    <br>
+    <button id="infoButton">Info</button>
+</div>
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>This project visualizes cellular data in an interactive way. The orbit represents different calls, with the direction of the orbit indicating whether the call was incoming or outgoing. The size of the orbit represents the length of the call. The color of the orbit indicates the category of the call: green for family, blue for friends, and purple for others. You can filter the data by duration using the slider, or by category using the checkboxes.</p>
     </div>
+</div>
+
+<script>
+    document.getElementById('infoButton').addEventListener('mouseover', function() {
+        document.getElementById('description').style.display = 'block';
+    });
+
+    document.getElementById('infoButton').addEventListener('mouseout', function() {
+        document.getElementById('description').style.display = 'none';
+    });
+</script>
+
+
 
     <!-- Slider for filtering duration -->
-    <div id="durationFilter" style="position: fixed; top: 50px; right: 20px; color: white;">
-        <input type="range" id="durationSlider" min="1" max="120" value="1">
-        <label for="durationSlider">Duration (1-120 seconds)</label>
-        <div id="durationValue">1</div> <!-- Added div to display current value -->
-    </div>
+<div id="durationFilter" style="position: fixed; top: 50px; right: 20px; color: white;">
+    <div id="durationValue" style="display: inline-block;">120</div> <!-- Removed 'sec' -->
+    <input type="range" id="durationSlider" min="1" max="120" value="120"> <!-- Value set to max -->
+</div>
 
     <!-- Checkboxes for filtering by call category -->
     <div id="categoryFilter" style="position: fixed; top: 150px; right: 20px; color: white;">
@@ -61,6 +86,28 @@
             <label for="toggleOutgoing">Outgoing</label>
         </div>
     </div>
+
+    <!-- Checkboxes for filtering by call status -->
+<div id="statusFilter" style="position: fixed; top: 350px; right: 20px; color: white;">
+    <div>
+        <input type="checkbox" id="toggleAnswered" checked>
+        <label for="toggleAnswered">Answered</label>
+    </div>
+    <div>
+        <input type="checkbox" id="toggleMissed" checked>
+        <label for="toggleMissed">Missed</label>
+    </div>
+</div>
+
+<!-- Crazy mode toggle -->
+<div id="crazyModeFilter" style="position: fixed; top: 450px; right: 20px; color: white;">
+    <div>
+        <input type="checkbox" id="toggleCrazyMode">
+        <label for="toggleCrazyMode">Crazy Mode</label>
+    </div>
+</div>
+
+
 
     <!-- Main visualization container -->
     <div id="visualization"></div>

@@ -148,14 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Filter state initialization
-    let filterState = {
-        friend: true,
-        family: true,
-        other: true,
-        incoming: true,
-        outgoing: true,
-        duration: 120, // Assuming this is your initial duration filter value
-    };
+let filterState = {
+    friend: true,
+    family: true,
+    other: true,
+    incoming: true,
+    outgoing: true,
+    answered: true,
+    missed: true,
+    duration: 120, // Assuming this is your initial duration filter value
+};
+
 
     // Function to apply filters based on the current filter state
     function applyFilters() {
@@ -163,9 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const categoryMatch = filterState[d.type.toLowerCase()];
             const directionMatch = filterState[d.direction];
             const durationMatch = d.duration <= filterState.duration;
-            return categoryMatch && directionMatch && durationMatch ? 'block' : 'none';
+            const statusMatch = filterState[d.status]; // This assumes your data's `status` property is either 'answered' or 'missed'
+            return categoryMatch && directionMatch && durationMatch && statusMatch ? 'block' : 'none';
         });
     }
+    
     
 
     // Function to update the filter state and apply filters
@@ -182,6 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply the updated filters
         applyFilters();
+
+        // Update filter state based on call status toggles
+    filterState.answered = document.getElementById('toggleAnswered').checked;
+    filterState.missed = document.getElementById('toggleMissed').checked;
+
+    // Apply the updated filters
+    applyFilters();
     }
 
     // Attach event listeners for checkboxes
@@ -190,6 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('toggleOther').addEventListener('change', updateFilters);
     document.getElementById('toggleIncoming').addEventListener('change', updateFilters);
     document.getElementById('toggleOutgoing').addEventListener('change', updateFilters);
+    document.getElementById('toggleAnswered').addEventListener('change', updateFilters);
+document.getElementById('toggleMissed').addEventListener('change', updateFilters);
+
 
     // Attach event listener for the duration slider
     document.getElementById('durationSlider').addEventListener('input', function() {
@@ -199,4 +214,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Apply filters on initial load
     applyFilters();
+
+
+    // Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("infoButton");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+// Variable to track the crazy mode state
+let isCrazyMode = false;
+
+// Event listener for the crazy mode toggle
+document.getElementById('toggleCrazyMode').addEventListener('change', function() {
+    isCrazyMode = this.checked;
+    if(isCrazyMode) {
+        // Apply crazy mode adjustments
+        applyCrazyMode();
+    } else {
+        // Revert to normal mode
+        location.reload(); // Simplest way to revert to normal behavior without adding complex logic
+    }
+});
+
+function applyCrazyMode() {
+    d3.selectAll('.planet').each(function() {
+        const planet = d3.select(this);
+
+        function crazyUpdate() {
+            if (!isCrazyMode) return; // Stop if crazy mode is turned off
+
+            // Random new position within the SVG bounds
+            const newX = Math.random() * (width - 150); // Adjust based on maximum expected size
+            const newY = Math.random() * (height - 150); // Adjust based on maximum expected size
+
+            // Random new size within a reasonable range, e.g., between 10px and 100px
+            const newSize = 10 + Math.random() * 90;
+
+            planet
+                .transition()
+                .duration(() => 2000 + Math.random() * 3000) // Smooth transition with random duration
+                .ease(d3.easeLinear)
+                .attr('x', newX)
+                .attr('y', newY)
+                .attr('width', newSize)
+                .attr('height', newSize)
+                .on('end', crazyUpdate); // Repeat after each move
+        }
+
+        crazyUpdate(); // Start the crazy movement and resizing
+    });
+}
+
+
+
+
+
+
+
 });
