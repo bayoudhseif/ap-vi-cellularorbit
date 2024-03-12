@@ -145,9 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterPlanetsByDuration = (duration) => {
         d3.selectAll('.planet').style('display', 'none'); // Hide all planets
         d3.selectAll('.planet')
-            .filter(function() {
-                return +this.dataset.duration <= duration; // Show planets with duration less than or equal to selected value
-            })
+        .filter(function(d) {
+            return d.duration <= duration; // Access duration from bound data 'd'
+        })
+        
             .style('display', 'block');
     };
 
