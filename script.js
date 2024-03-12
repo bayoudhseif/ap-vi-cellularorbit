@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     
 
-    document.body.style.backgroundImage = "url('img/blur3.png')";
+    document.body.style.backgroundImage = "url('img/blackpaper.png')";
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundAttachment = "fixed";
 
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const sun = svg.append('image')
-    .attr('xlink:href', 'img/sun4.png')
+    .attr('xlink:href', 'img/sun.png')
     .attr('width', 150)
     .attr('height', 150)
     .attr('x', width / 2 - 75)
@@ -126,9 +126,9 @@ setInterval(shakeSun, 6000);
 
     const imagePathForCallType = (call) => {
         switch (call.type) {
-            case 'Friend': return 'img/aaa.png';
-            case 'Family': return 'img/paper1.png';
-            case 'Other': return 'img/aaat.png';
+            case 'Friend': return 'img/blueball.png';
+            case 'Family': return 'img/greenball.png';
+            case 'Other': return 'img/pinkball.png';
             default: return '';
         }
     };
